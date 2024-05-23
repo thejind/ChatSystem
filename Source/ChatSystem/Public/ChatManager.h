@@ -91,8 +91,22 @@ public:
 
 	void MessageSent(const FString& Message);
 
-	void SendChatMessage(FString Message, EMessageType MessageType);
+	UFUNCTION(BlueprintCallable)
+	void SendPrivateMessage(FString Message, FString SenderId, FString ReceiverId);
 
+	UFUNCTION(BlueprintCallable)
+	void SendPartyMessage(FString Message, FString SenderId, FString PartyId);
 
+	UFUNCTION(BlueprintCallable)
+	void SendGlobalMessage(FString Message, FString SenderId);
+
+	UFUNCTION(BlueprintCallable)
+	void SendLobbyMessage(FString Message, FString SenderId);
+
+	UFUNCTION(BlueprintCallable)
+	void CreateParty(FString PartyID, FString PlayerID);
+
+	UFUNCTION(BlueprintCallable)
+	void JoinParty(FString PartyID, FString PlayerID);
 
 };

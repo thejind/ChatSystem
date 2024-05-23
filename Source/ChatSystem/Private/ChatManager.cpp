@@ -153,9 +153,73 @@ void AChatManager::MessageSent(const FString& Message)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 30.0f, FColor::Blue, "Message Sent :" + Message);
 }
-void AChatManager::SendChatMessage(FString Message, EMessageType MessageType)
+void AChatManager::SendPrivateMessage(FString Message, FString SenderId, FString ReceiverId)
 {
+	FString JsonString = TEXT("{");
+	JsonString += TEXT("\"type\": \"privateMessage\", ");
+	JsonString += FString::Printf(TEXT("\"senderId\": \"%s\", "), *SenderId);
+	JsonString += FString::Printf(TEXT("\"receiverId\": \"%s\", "), *ReceiverId);
+	JsonString += FString::Printf(TEXT("\"message\": \"%s\""), *Message);
+	JsonString += TEXT("}");
 
+	SendWebSocketMessage(JsonString);
+}
+
+void AChatManager::SendPartyMessage(FString Message, FString SenderId, FString PartyId)
+{
+	FString JsonString = TEXT("{");
+	JsonString += TEXT("\"type\": \"partyMessage\", ");
+	JsonString += FString::Printf(TEXT("\"partyId\": \"%s\", "), *PartyId);
+	JsonString += FString::Printf(TEXT("\"senderId\": \"%s\", "), *SenderId);
+	JsonString += FString::Printf(TEXT("\"message\": \"%s\""), *Message);
+	JsonString += TEXT("}");
+
+	SendWebSocketMessage(JsonString);
+}
+
+void AChatManager::SendGlobalMessage(FString Message, FString SenderId)
+{
+	FString JsonString = TEXT("{");
+	JsonString += TEXT("\"type\": \"globalMessage\", ");
+	JsonString += FString::Printf(TEXT("\"senderId\": \"%s\", "), *SenderId);
+	JsonString += FString::Printf(TEXT("\"message\": \"%s\""), *Message);
+	JsonString += TEXT("}");
+
+	SendWebSocketMessage(JsonString);
+}
+
+void AChatManager::SendLobbyMessage(FString Message, FString SenderId)
+{
+	FString JsonString = TEXT("{");
+	JsonString += TEXT("\"type\": \"lobbyMessage\", ");
+	JsonString += FString::Printf(TEXT("\"senderId\": \"%s\", "), *SenderId);
+	JsonString += FString::Printf(TEXT("\"message\": \"%s\""), *Message);
+	JsonString += TEXT("}");
+
+	SendWebSocketMessage(JsonString);
+}
+
+
+void AChatManager::CreateParty(FString PartyID, FString PlayerID)
+{
+	FString JsonString = TEXT("{");
+	JsonString += TEXT("\"type\": \"createParty\", ");
+	JsonString += FString::Printf(TEXT("\"playerId\": \"%s\", "), *PlayerID);
+	JsonString += FString::Printf(TEXT("\"partyId\": \"%s\""), *PartyID);
+	JsonString += TEXT("}");
+
+	SendWebSocketMessage(JsonString);
+}
+
+void AChatManager::JoinParty(FString PartyID, FString PlayerID)
+{
+	FString JsonString = TEXT("{");
+	JsonString += TEXT("\"type\": \"joinParty\", ");
+	JsonString += FString::Printf(TEXT("\"playerId\": \"%s\", "), *PlayerID);
+	JsonString += FString::Printf(TEXT("\"partyId\": \"%s\""), *PartyID);
+	JsonString += TEXT("}");
+
+	SendWebSocketMessage(JsonString);
 }
 
 
