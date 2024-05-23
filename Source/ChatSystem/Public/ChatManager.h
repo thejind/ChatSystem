@@ -37,7 +37,7 @@ struct FReceivedMessage
 	FReceivedMessage()
 	{
 		SenderId = TEXT("");
-		MessageType = EMessageType::Private; // Set default message type
+		MessageType = EMessageType::SentMsg; // Set default message type
 		Content = TEXT("");
 	}
 
@@ -85,7 +85,14 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FKFOnMessageRecieved OnMessageRecieved;
 
-	FReceivedMessage MessageReceived;
+	FReceivedMessage MessageReceivedFromServer;
+
+	void MessageRecieved();
+
+	void MessageSent(const FString& Message);
+
+	void SendChatMessage(FString Message, EMessageType MessageType);
+
 
 
 };

@@ -41,21 +41,16 @@ void AChatManager::ConnectChatServer(FString URL)
 		FModuleManager::Get().LoadModule("WebSockets");
 	}
 
-	/*if (InMessage.IsEmpty())
-	{
-		InMessage = "";
-	}*/
-
-	FString Protocol = "wss";
+	FString Protocol = "ws";
 
 	//createing websocket pointer
 	WebSocket = FWebSocketsModule::Get().CreateWebSocket(URL, Protocol);
 
 	//Assigning the functions
-	WebSocket->OnConnected().AddUFunction(this, FName("MessageRecieved"));
-	WebSocket->OnMessage().AddUFunction(this, FName("RecievedWebSocketMessage"));
-	WebSocket->OnMessageSent().AddUFunction(this, FName("MessageSent"));
-	WebSocket->OnClosed().AddUFunction(this, FName("ChatServerClosed"));
+	//WebSocket->OnConnected().AddUFunction(this, FName("MessageRecieved"));
+	WebSocket->OnMessage().AddUObject(this, &AChatManager::RecievedWebSocketMessage);
+	WebSocket->OnMessageSent().AddUObject(this, &AChatManager::MessageSent);
+	//WebSocket->OnClosed().AddUFunction(this, FName("ChatServerClosed"));
 
 	WebSocket->Connect();
 	//WebSocket->Send("40");
@@ -65,7 +60,7 @@ void AChatManager::ConnectChatServer(FString URL)
 void AChatManager::RecievedWebSocketMessage(const FString& Message)
 {
 
-	GEngine->AddOnScreenDebugMessage(-1, 30.0f, FColor::Blue, "Message Sent :" + Message);
+	GEngine->AddOnScreenDebugMessage(-1, 30.0f, FColor::Red, "Message Receieved :" + Message);
 
 	TSharedPtr<FJsonObject> JsonObject;
 	TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(Message);
@@ -80,36 +75,36 @@ void AChatManager::RecievedWebSocketMessage(const FString& Message)
 
 		if (MessageType.Equals("private"))
 		{
-			MessageReceived.Content = JsonObject->GetStringField(TEXT("context"));
-			MessageReceived.MessageType = EMessageType::Private;
-			MessageReceived.SenderId = JsonObject->GetStringField(TEXT("sender"));
+			MessageReceivedFromServer.Content = JsonObject->GetStringField(TEXT("context"));
+			MessageReceivedFromServer.MessageType = EMessageType::Private;
+			MessageReceivedFromServer.SenderId = JsonObject->GetStringField(TEXT("sender"));
 
-			OnMessageRecieved.Broadcast(MessageReceived);
+			OnMessageRecieved.Broadcast(MessageReceivedFromServer);
 			
 		}
 		else if (MessageType.Equals("party"))
 		{
-			MessageReceived.Content = JsonObject->GetStringField(TEXT("context"));
-			MessageReceived.MessageType = EMessageType::Party;
-			MessageReceived.SenderId = JsonObject->GetStringField(TEXT("sender"));
+			MessageReceivedFromServer.Content = JsonObject->GetStringField(TEXT("context"));
+			MessageReceivedFromServer.MessageType = EMessageType::Party;
+			MessageReceivedFromServer.SenderId = JsonObject->GetStringField(TEXT("sender"));
 
-			OnMessageRecieved.Broadcast(MessageReceived);
+			OnMessageRecieved.Broadcast(MessageReceivedFromServer);
 		}
 		else if (MessageType.Equals("lobby"))
 		{
-			MessageReceived.Content = JsonObject->GetStringField(TEXT("context"));
-			MessageReceived.MessageType = EMessageType::Lobby;
-			MessageReceived.SenderId = JsonObject->GetStringField(TEXT("sender"));
+			MessageReceivedFromServer.Content = JsonObject->GetStringField(TEXT("context"));
+			MessageReceivedFromServer.MessageType = EMessageType::Lobby;
+			MessageReceivedFromServer.SenderId = JsonObject->GetStringField(TEXT("sender"));
 
-			OnMessageRecieved.Broadcast(MessageReceived);
+			OnMessageRecieved.Broadcast(MessageReceivedFromServer);
 		}
 		else if (MessageType.Equals("global"))
 		{
-			MessageReceived.Content = JsonObject->GetStringField(TEXT("context"));
-			MessageReceived.MessageType = EMessageType::Global;
-			MessageReceived.SenderId = JsonObject->GetStringField(TEXT("sender"));
+			MessageReceivedFromServer.Content = JsonObject->GetStringField(TEXT("context"));
+			MessageReceivedFromServer.MessageType = EMessageType::Global;
+			MessageReceivedFromServer.SenderId = JsonObject->GetStringField(TEXT("sender"));
 
-			OnMessageRecieved.Broadcast(MessageReceived);
+			OnMessageRecieved.Broadcast(MessageReceivedFromServer);
 		}
 		else
 		{
@@ -148,5 +143,20 @@ void AChatManager::RegisterPlayer(FString PlayerID)
 	
 	SendWebSocketMessage(JsonString);
 }
+
+void AChatManager::MessageRecieved()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 30.0f, FColor::Blue, "Message Recieved!!");
+}
+
+void AChatManager::MessageSent(const FString& Message)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 30.0f, FColor::Blue, "Message Sent :" + Message);
+}
+void AChatManager::SendChatMessage(FString Message, EMessageType MessageType)
+{
+
+}
+
 
 
