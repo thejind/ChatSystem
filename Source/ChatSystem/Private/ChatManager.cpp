@@ -70,46 +70,59 @@ void AChatManager::RecievedWebSocketMessage(const FString& Message)
 		// Successfully parsed JSON
 		UE_LOG(LogTemp, Warning, TEXT("JSON Deserialized successfully"));
 
-		FString MessageType = JsonObject->GetStringField(TEXT("type"));
+		FString MessageType = "";
 		FString Message = "";
 
-		if (MessageType.Equals("private"))
+		if (JsonObject->TryGetStringField(TEXT("type"), MessageType))
 		{
-			MessageReceivedFromServer.Content = JsonObject->GetStringField(TEXT("context"));
-			MessageReceivedFromServer.MessageType = EMessageType::Private;
-			MessageReceivedFromServer.SenderId = JsonObject->GetStringField(TEXT("sender"));
+			UE_LOG(LogTemp, Warning, TEXT("Type : %s"), *MessageType);
+			if (MessageType.Equals("privateMessage"))
+			{
+				MessageReceivedFromServer.Content = JsonObject->GetStringField(TEXT("text"));
+				MessageReceivedFromServer.MessageType = EMessageType::Private;
+				MessageReceivedFromServer.SenderId = JsonObject->GetStringField(TEXT("from"));
 
-			OnMessageRecieved.Broadcast(MessageReceivedFromServer);
-			
-		}
-		else if (MessageType.Equals("party"))
-		{
-			MessageReceivedFromServer.Content = JsonObject->GetStringField(TEXT("context"));
-			MessageReceivedFromServer.MessageType = EMessageType::Party;
-			MessageReceivedFromServer.SenderId = JsonObject->GetStringField(TEXT("sender"));
+				OnMessageRecieved.Broadcast(MessageReceivedFromServer);
 
-			OnMessageRecieved.Broadcast(MessageReceivedFromServer);
-		}
-		else if (MessageType.Equals("lobby"))
-		{
-			MessageReceivedFromServer.Content = JsonObject->GetStringField(TEXT("context"));
-			MessageReceivedFromServer.MessageType = EMessageType::Lobby;
-			MessageReceivedFromServer.SenderId = JsonObject->GetStringField(TEXT("sender"));
+			}
+			else if (MessageType.Equals("partyMessage"))
+			{
+				MessageReceivedFromServer.Content = JsonObject->GetStringField(TEXT("text"));
+				MessageReceivedFromServer.MessageType = EMessageType::Party;
+				MessageReceivedFromServer.SenderId = JsonObject->GetStringField(TEXT("from"));
 
-			OnMessageRecieved.Broadcast(MessageReceivedFromServer);
-		}
-		else if (MessageType.Equals("global"))
-		{
-			MessageReceivedFromServer.Content = JsonObject->GetStringField(TEXT("context"));
-			MessageReceivedFromServer.MessageType = EMessageType::Global;
-			MessageReceivedFromServer.SenderId = JsonObject->GetStringField(TEXT("sender"));
+				OnMessageRecieved.Broadcast(MessageReceivedFromServer);
+			}
+			else if (MessageType.Equals("lobbyMessage"))
+			{
+				MessageReceivedFromServer.Content = JsonObject->GetStringField(TEXT("text"));
+				MessageReceivedFromServer.MessageType = EMessageType::Lobby;
+				MessageReceivedFromServer.SenderId = JsonObject->GetStringField(TEXT("from"));
 
-			OnMessageRecieved.Broadcast(MessageReceivedFromServer);
+				OnMessageRecieved.Broadcast(MessageReceivedFromServer);
+			}
+			else if (MessageType.Equals("globalMessage"))
+			{
+				MessageReceivedFromServer.Content = JsonObject->GetStringField(TEXT("text"));
+				MessageReceivedFromServer.MessageType = EMessageType::Global;
+				MessageReceivedFromServer.SenderId = JsonObject->GetStringField(TEXT("from"));
+
+				OnMessageRecieved.Broadcast(MessageReceivedFromServer);
+			}
+			else
+			{
+				UE_LOG(LogTemp, Error, TEXT("Invalid Message"));
+			}
 		}
 		else
 		{
-			UE_LOG(LogTemp, Error, TEXT("Invalid Message"));
+			UE_LOG(LogTemp, Warning, TEXT("No MessageType Found !!"));
 		}
+
+		 
+		//UE_LOG(LogTemp, Warning, TEXT("JSON Deserialized successfully"),);
+
+		
 	}
 	else
 	{
@@ -221,6 +234,18 @@ void AChatManager::JoinParty(FString PartyID, FString PlayerID)
 
 	SendWebSocketMessage(JsonString);
 }
+
+void AChatManager::GetPartyMembers(FString PartyID)
+{
+	FString JsonString = TEXT("{");
+	JsonString += TEXT("\"type\": \"getPartyMembers\", ");
+	JsonString += FString::Printf(TEXT("\"partyId\": \"%s\""), *PartyID);
+	JsonString += TEXT("}");
+
+	SendWebSocketMessage(JsonString);
+}
+
+
 
 
 

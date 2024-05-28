@@ -109,4 +109,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void JoinParty(FString PartyID, FString PlayerID);
 
+	UFUNCTION(BlueprintCallable)
+	void GetPartyMembers(FString PartyID);
+
+
+
 };
