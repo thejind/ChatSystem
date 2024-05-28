@@ -112,6 +112,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void GetPartyMembers(FString PartyID);
 
+	UFUNCTION(BlueprintCallable)
+	void EmptyParty(FString PartyID);
+
 
 
 };

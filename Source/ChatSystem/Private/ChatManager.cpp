@@ -245,6 +245,16 @@ void AChatManager::GetPartyMembers(FString PartyID)
 	SendWebSocketMessage(JsonString);
 }
 
+void AChatManager::EmptyParty(FString PartyID)
+{
+	FString JsonString = TEXT("{");
+	JsonString += TEXT("\"type\": \"emptyParty\", ");
+	JsonString += FString::Printf(TEXT("\"partyId\": \"%s\""), *PartyID);
+	JsonString += TEXT("}");
+
+	SendWebSocketMessage(JsonString);
+}
+
 
 
 
