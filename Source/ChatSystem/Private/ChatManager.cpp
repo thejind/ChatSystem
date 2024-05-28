@@ -138,7 +138,7 @@ void AChatManager::RegisterPlayer(FString PlayerID)
 {
 	FString JsonString = TEXT("{");
 	JsonString += TEXT("\"type\": \"register\", ");
-	JsonString += FString::Printf(TEXT("\"playerId\": \"%s\""), *PlayerID);
+	JsonString += FString::Printf(TEXT("\"senderId\": \"%s\""), *PlayerID);
 	JsonString += TEXT("}");
 	
 	SendWebSocketMessage(JsonString);
@@ -158,7 +158,7 @@ void AChatManager::SendPrivateMessage(FString Message, FString SenderId, FString
 	FString JsonString = TEXT("{");
 	JsonString += TEXT("\"type\": \"privateMessage\", ");
 	JsonString += FString::Printf(TEXT("\"senderId\": \"%s\", "), *SenderId);
-	JsonString += FString::Printf(TEXT("\"receiverId\": \"%s\", "), *ReceiverId);
+	JsonString += FString::Printf(TEXT("\"targetPlayerId\": \"%s\", "), *ReceiverId);
 	JsonString += FString::Printf(TEXT("\"message\": \"%s\""), *Message);
 	JsonString += TEXT("}");
 
@@ -204,7 +204,7 @@ void AChatManager::CreateParty(FString PartyID, FString PlayerID)
 {
 	FString JsonString = TEXT("{");
 	JsonString += TEXT("\"type\": \"createParty\", ");
-	JsonString += FString::Printf(TEXT("\"playerId\": \"%s\", "), *PlayerID);
+	JsonString += FString::Printf(TEXT("\"senderId\": \"%s\", "), *PlayerID);
 	JsonString += FString::Printf(TEXT("\"partyId\": \"%s\""), *PartyID);
 	JsonString += TEXT("}");
 
@@ -215,7 +215,7 @@ void AChatManager::JoinParty(FString PartyID, FString PlayerID)
 {
 	FString JsonString = TEXT("{");
 	JsonString += TEXT("\"type\": \"joinParty\", ");
-	JsonString += FString::Printf(TEXT("\"playerId\": \"%s\", "), *PlayerID);
+	JsonString += FString::Printf(TEXT("\"senderId\": \"%s\", "), *PlayerID);
 	JsonString += FString::Printf(TEXT("\"partyId\": \"%s\""), *PartyID);
 	JsonString += TEXT("}");
 
