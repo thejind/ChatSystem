@@ -115,6 +115,14 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void EmptyParty(FString PartyID);
 
+	UFUNCTION(BlueprintCallable)
+	void MutePlayer(FString PartyID);
+
+	UFUNCTION(BlueprintCallable)
+	void connectionSuccess();
+
+	UPROPERTY(BlueprintReadOnly)
+	bool isConnectionSuccess;
 
 
 };

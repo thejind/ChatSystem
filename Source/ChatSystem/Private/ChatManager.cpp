@@ -55,6 +55,8 @@ void AChatManager::ConnectChatServer(FString URL)
 	WebSocket->Connect();
 	//WebSocket->Send("40");
 
+	//return WebSocket->IsConnected();
+
 }
 
 void AChatManager::RecievedWebSocketMessage(const FString& Message)
@@ -72,6 +74,7 @@ void AChatManager::RecievedWebSocketMessage(const FString& Message)
 
 		FString MessageType = "";
 		FString Message = "";
+		bool connection = false;
 
 		if (JsonObject->TryGetStringField(TEXT("type"), MessageType))
 		{
@@ -114,15 +117,17 @@ void AChatManager::RecievedWebSocketMessage(const FString& Message)
 				UE_LOG(LogTemp, Error, TEXT("Invalid Message"));
 			}
 		}
+		else if (JsonObject->TryGetBoolField(TEXT("connection"), connection))
+		{
+			connectionSuccess();
+		}
 		else
 		{
 			UE_LOG(LogTemp, Warning, TEXT("No MessageType Found !!"));
 		}
 
 		 
-		//UE_LOG(LogTemp, Warning, TEXT("JSON Deserialized successfully"),);
-
-		
+		//UE_LOG(LogTemp, Warning, TEXT("JSON Deserialized successfully"),);		
 	}
 	else
 	{
@@ -254,6 +259,17 @@ void AChatManager::EmptyParty(FString PartyID)
 
 	SendWebSocketMessage(JsonString);
 }
+
+void AChatManager::MutePlayer(FString PartyID)
+{
+
+}
+
+void AChatManager::connectionSuccess()
+{
+	isConnectionSuccess = true;
+}
+
 
 
 
