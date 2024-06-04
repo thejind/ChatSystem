@@ -75,6 +75,12 @@ void AChatManager::RecievedWebSocketMessage(const FString& Message)
 		FString MessageType = "";
 		FString Message = "";
 		bool connection = false;
+		TArray<TSharedPtr<FJsonValue>> JsonArray;
+
+		if (JsonObject->HasTypedField<EJson::Array>("Name"))
+		{
+
+		}
 
 		if (JsonObject->TryGetStringField(TEXT("type"), MessageType))
 		{
@@ -125,6 +131,7 @@ void AChatManager::RecievedWebSocketMessage(const FString& Message)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("No MessageType Found !!"));
 		}
+		
 
 		 
 		//UE_LOG(LogTemp, Warning, TEXT("JSON Deserialized successfully"),);		
