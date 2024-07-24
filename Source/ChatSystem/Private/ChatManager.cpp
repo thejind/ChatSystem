@@ -15,8 +15,8 @@ AChatManager::AChatManager()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
-
+	SID = "";
+	isConnectionSuccess = false;
 
 }
 
@@ -24,6 +24,7 @@ AChatManager::AChatManager()
 void AChatManager::BeginPlay()
 {
 	Super::BeginPlay();
+
 	
 }
 
@@ -125,7 +126,10 @@ void AChatManager::RecievedWebSocketMessage(const FString& Message)
 		}
 		else if (JsonObject->TryGetBoolField(TEXT("connection"), connection))
 		{
-			connectionSuccess();
+			if(connection && JsonObject->TryGetStringField(TEXT("SID"), SID))
+			{
+				connectionSuccess(true);
+			}
 		}
 		else
 		{
@@ -148,7 +152,7 @@ void AChatManager::SendWebSocketMessage(const FString& Message)
 	{
 		if (WebSocket->IsConnected())
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 30.0f, FColor::Blue, "Message Sent :" + Message);
+			//GEngine->AddOnScreenDebugMessage(-1, 30.0f, FColor::Blue, "Message Sent :" + Message);
 			WebSocket->Send(Message);
 		}
 
@@ -272,9 +276,9 @@ void AChatManager::MutePlayer(FString PartyID)
 
 }
 
-void AChatManager::connectionSuccess()
+void AChatManager::connectionSuccess(bool isSuccess)
 {
-	isConnectionSuccess = true;
+	isConnectionSuccess = isSuccess;
 }
 
 

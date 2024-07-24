@@ -119,10 +119,13 @@ public:
 	void MutePlayer(FString PartyID);
 
 	UFUNCTION(BlueprintCallable)
-	void connectionSuccess();
+	void connectionSuccess(bool isSuccess);
 
 	UPROPERTY(BlueprintReadOnly)
 	bool isConnectionSuccess;
+
+	UPROPERTY(BlueprintReadOnly)
+	FString SID;
 
 
 };
