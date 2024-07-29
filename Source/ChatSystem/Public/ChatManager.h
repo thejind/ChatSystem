@@ -50,6 +50,7 @@ struct FReceivedMessage
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FKFOnMessageRecieved, FReceivedMessage, ReceivedMessage);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FKFOnPartyMembersUpdated);
 
 UCLASS()
 class CHATSYSTEM_API AChatManager : public AActor
@@ -84,6 +85,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable)
 	FKFOnMessageRecieved OnMessageRecieved;
+
+	UPROPERTY(BlueprintAssignable)
+	FKFOnPartyMembersUpdated OnPartyMembersUpdated;
 
 	FReceivedMessage MessageReceivedFromServer;
 
@@ -126,6 +130,9 @@ public:
 
 	UPROPERTY(BlueprintReadOnly)
 	FString SID;
+
+	UPROPERTY(BlueprintReadOnly)
+	TArray<FString> PartyMembers;
 
 
 };

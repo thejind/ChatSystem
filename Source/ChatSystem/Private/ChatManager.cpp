@@ -119,6 +119,12 @@ void AChatManager::RecievedWebSocketMessage(const FString& Message)
 
 				OnMessageRecieved.Broadcast(MessageReceivedFromServer);
 			}
+			else if (MessageType.Equals("partyMembers"))
+			{
+				PartyMembers.Empty();
+				JsonObject->TryGetStringArrayField(TEXT("members"), PartyMembers);
+				OnPartyMembersUpdated.Broadcast();
+			}
 			else
 			{
 				UE_LOG(LogTemp, Error, TEXT("Invalid Message"));
